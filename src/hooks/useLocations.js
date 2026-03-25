@@ -17,15 +17,17 @@ export function useLocations() {
 
     fetch(`/rsdb_clean_240824.csv?t=${Date.now()}`)
       .then(res => { if (!res.ok) throw new Error("not found"); return res.text(); })
-      .then(text => {
-        const map = parseLocationsCSV(text);
-        cachedLocations = map;
-        setLocations(map);
-      })
-      .catch(() => {
-        cachedLocations = new Map();
-        setLocations(new Map());
-      })
+.then(text => {
+  const map = parseLocationsCSV(text);
+  console.log("CSV loaded, keys:", [...map.keys()]);
+  cachedLocations = map;
+  setLocations(map);
+})
+.catch((err) => {
+  console.error("CSV load failed:", err);
+  cachedLocations = new Map();
+  setLocations(new Map());
+})
       .finally(() => setLoading(false));
   }, []);
 

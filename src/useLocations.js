@@ -8,6 +8,8 @@ import { parseLocationsCSV } from "../utils/parseLocationsCSV";
 
 let cachedLocations = null; // module-level cache — parse once per session
 
+
+
 export function useLocations() {
   const [locations, setLocations] = useState(cachedLocations);
   const [loading, setLoading] = useState(!cachedLocations);
@@ -15,7 +17,7 @@ export function useLocations() {
   useEffect(() => {
     if (cachedLocations) { setLocations(cachedLocations); setLoading(false); return; }
 
-    fetch(`/rsdb_clean_240824.csv?t=${Date.now()}`)
+    fetch(`${import.meta.env.DEV ? '/' : import.meta.env.BASE_URL}rsdb_clean_240824.csv?t=${Date.now()}`)
       .then(res => { if (!res.ok) throw new Error("not found"); return res.text(); })
       .then(text => {
         const map = parseLocationsCSV(text);
@@ -28,6 +30,8 @@ export function useLocations() {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  
 
   return { locations, loading };
 }

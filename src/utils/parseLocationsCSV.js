@@ -15,14 +15,14 @@ const TYPE_MAP = {
   "common pool resource harvesting": "Common pool resource harvesting",
   "coniferous to deciduous forest": "Coniferous to deciduous forest",
   "coral transitions":             "Coral transitions",
-  "dryland degradation":           "Bush encroachment",         // closest match
+  "dryland degradation":           "Bush encroachment",       
   "fisheries collapse":            "Fisheries collapse",
   "forest to savanna":             "Forest to savanna",
   "freshwater eutrophication":     "Freshwater eutrophication",
   "greenland ice sheet collapse":  "Greenland ice sheet collapse",
   "hypoxia":                       "Hypoxia",
   "kelps transitions":             "Kelp transitions",
-  "mangroves transitions":         "Salt marshes to tidal flats", // closest coastal wetland
+  "mangroves transitions":         "Salt marshes to tidal flats", 
   "marine eutrophication":         "Marine eutrophication",
   "marine foodwebs":               "Marine food webs",
   "moonson":                       "Indian summer monsoon",
@@ -31,7 +31,7 @@ const TYPE_MAP = {
   "river channel change":          "River channel change",
   "salt marshes to tidal flats":   "Salt marshes to tidal flats",
   "seagrass transitions":          "Seagrass transitions",
-  "soil salinization":             "Bush encroachment",          // closest dryland match
+  "soil salinization":             "Bush encroachment",         
   "sprawling vs compact city":     "Sprawling vs compact cities",
   "steppe to tundra":              "Steppe to tundra",
   "submerged to floating plants":  "Submerged to floating plants",
@@ -78,8 +78,9 @@ export function parseLocationsCSV(text) {
     const shiftName = TYPE_MAP[rawType];
     if (!shiftName) continue;
 
-    if (!result.has(shiftName)) result.set(shiftName, []);
-    result.get(shiftName).push({ lng, lat, name, id });
+const key = shiftName.toLowerCase();
+if (!result.has(key)) result.set(key, []);
+result.get(key).push({ lng, lat, name, id });
   }
 
   return result;

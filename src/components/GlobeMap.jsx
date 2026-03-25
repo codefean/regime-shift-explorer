@@ -63,16 +63,6 @@ export default function GlobeMap({ shift, locations = [] }) {
 
     // ── Add location points once map loads ────────────────────────────────
     map.on("load", () => {
-      addPoints(map, locations);
-      setPointCount(locations.length);
-
-      // If we have points, fly to a sensible centroid first
-      if (locations.length > 0) {
-        const avgLng = locations.reduce((s, p) => s + p.lng, 0) / locations.length;
-        const avgLat = locations.reduce((s, p) => s + p.lat, 0) / locations.length;
-        map.flyTo({ center: [avgLng, avgLat], zoom: 2, duration: 1500, essential: true });
-      }
-
       // Hover tooltip
       map.on("mouseenter", LAYER_HIT, e => {
         map.getCanvas().style.cursor = "pointer";
@@ -113,7 +103,29 @@ export default function GlobeMap({ shift, locations = [] }) {
       setTooltip(null);
       map.remove();
     };
-  }, [shift?.name]); 
+  }, [shift?.name]);
+
+  // ── Update points whenever locations arrive (CSV loads after map init) ────
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const apply = () => {
+      addPoints(map, locations);
+      setPointCount(locations.length);
+      if (locations.length > 0) {
+        const avgLng = locations.reduce((s, p) => s + p.lng, 0) / locations.length;
+        const avgLat = locations.reduce((s, p) => s + p.lat, 0) / locations.length;
+        map.flyTo({ center: [avgLng, avgLat], zoom: 2, duration: 1500, essential: true });
+      }
+    };
+
+    if (map.isStyleLoaded()) {
+      apply();
+    } else {
+      map.once("load", apply);
+    }
+  }, [locations]);
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
