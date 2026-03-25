@@ -11,4 +11,4 @@ dist/
 
 # editor
 .DS_Store
-.vscode/
+.vscode/docs/
