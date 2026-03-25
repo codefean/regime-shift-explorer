@@ -113,7 +113,7 @@ export default function GlobeMap({ shift, locations = [] }) {
       setTooltip(null);
       map.remove();
     };
-  }, [shift?.name]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [shift?.name]); 
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
@@ -174,7 +174,6 @@ export default function GlobeMap({ shift, locations = [] }) {
   );
 }
 
-// ── Helpers ────────────────────────────────────────────────────────────────
 
 function addPoints(map, locations) {
   if (!locations?.length) return;
@@ -188,7 +187,6 @@ function addPoints(map, locations) {
     })),
   };
 
-  // Clean up any existing layers/source from a previous load
   [LAYER_HALO, LAYER_DOT, LAYER_HIT].forEach(id => {
     if (map.getLayer(id)) map.removeLayer(id);
   });
@@ -224,7 +222,6 @@ function addPoints(map, locations) {
     },
   });
 
-  // Invisible larger hit target for hover
   map.addLayer({
     id: LAYER_HIT,
     type: "circle",
@@ -246,8 +243,7 @@ function NoTokenOverlay() {
       textAlign: "center", padding: 32, gap: 12, zIndex: 10,
     }}>
       <div style={{ fontSize: 24 }}>🌐</div>
-      <div>Add your Mapbox token to <code style={{ color: "#5ab87e" }}>.env</code></div>
-      <div style={{ fontSize: 11, color: "#2d4038" }}>VITE_MAPBOX_TOKEN=pk.eyJ1...</div>
+
     </div>
   );
 }
