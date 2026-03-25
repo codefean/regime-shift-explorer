@@ -1,101 +1,80 @@
 // utils/parseLocationsCSV.js
-// Parses rsdb_clean_240824.csv (or any CSV with `type`, `long`, `lat`, `case_study_name` columns)
-// Returns a Map: normalised shift name → array of { lng, lat, name, id }
-//
-// The CSV `type` values don't always match the app's shift names exactly,
-// so we normalise both sides to lowercase and do fuzzy keyword matching.
+// Parses rsdb_clean_240824.csv and returns:
+//   Map<string, Array<{lng, lat, name, id}>>
+// keyed by the "type" field (regime shift type), normalised to match shifts.js display names.
 
-// Manual mapping from CSV `type` values → app shift names
-// Key: lowercase CSV type, Value: exact app shift name
-const TYPE_MAP = {
-  "arctic benthos borealisation":  "Arctic benthos borealisation",
-  "arctic sea-ice loss":           "Arctic sea ice loss",
-  "bivalves collapse":             "Bivalves collapse",
-  "bush encroachment":             "Bush encroachment",
-  "common pool resource harvesting": "Common pool resource harvesting",
-  "coniferous to deciduous forest": "Coniferous to deciduous forest",
-  "coral transitions":             "Coral transitions",
-  "dryland degradation":           "Bush encroachment",       
-  "fisheries collapse":            "Fisheries collapse",
-  "forest to savanna":             "Forest to savanna",
-  "freshwater eutrophication":     "Freshwater eutrophication",
-  "greenland ice sheet collapse":  "Greenland ice sheet collapse",
-  "hypoxia":                       "Hypoxia",
-  "kelps transitions":             "Kelp transitions",
-  "mangroves transitions":         "Salt marshes to tidal flats", 
-  "marine eutrophication":         "Marine eutrophication",
-  "marine foodwebs":               "Marine food webs",
-  "moonson":                       "Indian summer monsoon",
-  "peatland transitions":          "Peatland transitions",
-  "primary production arctic ocean": "Primary productivity — Arctic Ocean",
-  "river channel change":          "River channel change",
-  "salt marshes to tidal flats":   "Salt marshes to tidal flats",
-  "seagrass transitions":          "Seagrass transitions",
-  "soil salinization":             "Bush encroachment",         
-  "sprawling vs compact city":     "Sprawling vs compact cities",
-  "steppe to tundra":              "Steppe to tundra",
-  "submerged to floating plants":  "Submerged to floating plants",
-  "thermohaline circulation":      "Thermohaline circulation (AMOC)",
-  "thermokarst lakes":             "Thermokarst lakes",
-  "tundra to forest":              "Tundra to boreal forest",
-  "west antarctic ice sheet collapse": "West Antarctic ice sheet collapse",
+// Maps CSV "type" values → shifts.js name where they differ
+const CSV_TYPE_MAP = {
+  "Thermohaline circulation":          "Thermohaline circulation (AMOC)",
+  "Arctic sea-ice loss":               "Arctic sea ice loss",
+  "West antarctic ice sheet collapse": "West Antarctic ice sheet collapse",
+  "Kelps transitions":                 "Kelp transitions",
+  "Marine foodwebs":                   "Marine food webs",
+  "Primary production arctic ocean":   "Primary productivity — Arctic Ocean",
+  "Tundra to forest":                  "Tundra to boreal forest",
+  "Moonson":                           "Indian summer monsoon",
+  "Sprawling vs compact city":         "Sprawling vs compact cities",
 };
 
 export function parseLocationsCSV(text) {
-  const lines = text.trim().split(/\r?\n/);
+  const lines = text.split("\n");
   if (lines.length < 2) return new Map();
 
-  const headers = lines[0].split(",").map(h => h.trim().replace(/^"|"$/g, "").toLowerCase());
+  // Parse header — handle quoted commas
+  const headers = parseCSVRow(lines[0]);
+  const typeIdx = headers.indexOf("type");
+  const lngIdx  = headers.indexOf("long");
+  const latIdx  = headers.indexOf("lat");
+  const nameIdx = headers.indexOf("case_study_name");
+  const idIdx   = headers.indexOf("id");
 
-  const idxOf = name => headers.indexOf(name);
-  const iType   = idxOf("type");
-  const iLng    = idxOf("long");
-  const iLat    = idxOf("lat");
-  const iName   = idxOf("case_study_name");
-  const iId     = idxOf("id");
-
-  if (iType === -1 || iLng === -1 || iLat === -1) {
-    console.warn("parseLocationsCSV: missing required columns (type, long, lat)");
-    return new Map();
-  }
-
-  const result = new Map(); // shiftName → [{lng, lat, name, id}]
+  const map = new Map();
 
   for (let i = 1; i < lines.length; i++) {
-    const row = splitCSVRow(lines[i]);
-    if (!row.length) continue;
+    const line = lines[i].trim();
+    if (!line) continue;
 
-    const rawType = (row[iType] || "").trim().replace(/^"|"$/g, "").toLowerCase();
-    const lng     = parseFloat((row[iLng] || "").replace(/^"|"$/g, ""));
-    const lat     = parseFloat((row[iLat] || "").replace(/^"|"$/g, ""));
-    const name    = (row[iName] || "").replace(/^"|"$/g, "").trim();
-    const id      = (row[iId] || "").replace(/^"|"$/g, "").trim();
+    const cols = parseCSVRow(line);
+    const rawType = cols[typeIdx]?.trim();
+    const lng     = parseFloat(cols[lngIdx]);
+    const lat     = parseFloat(cols[latIdx]);
 
-    if (!rawType || rawType === "na" || rawType === "unclassified") continue;
-    if (isNaN(lng) || isNaN(lat)) continue;
-    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) continue;
+    if (!rawType || isNaN(lng) || isNaN(lat)) continue;
 
-    const shiftName = TYPE_MAP[rawType];
-    if (!shiftName) continue;
+    // Normalise to the display name used in shifts.js, falling back to the raw CSV value
+    const key = CSV_TYPE_MAP[rawType] ?? rawType;
 
-const key = shiftName.toLowerCase();
-if (!result.has(key)) result.set(key, []);
-result.get(key).push({ lng, lat, name, id });
+    const entry = {
+      id:   cols[idIdx]?.trim() ?? String(i),
+      name: cols[nameIdx]?.trim() ?? rawType,
+      lng,
+      lat,
+    };
+
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(entry);
   }
 
-  return result;
+  return map;
 }
 
-function splitCSVRow(line) {
-  const result = [];
-  let current = "";
+// Minimal RFC-4180 CSV row parser (handles quoted fields with commas)
+function parseCSVRow(line) {
+  const fields = [];
+  let cur = "";
   let inQuotes = false;
+
   for (let i = 0; i < line.length; i++) {
     const ch = line[i];
-    if (ch === '"') { inQuotes = !inQuotes; }
-    else if (ch === "," && !inQuotes) { result.push(current); current = ""; }
-    else { current += ch; }
+    if (ch === '"') {
+      if (inQuotes && line[i + 1] === '"') { cur += '"'; i++; }
+      else inQuotes = !inQuotes;
+    } else if (ch === "," && !inQuotes) {
+      fields.push(cur); cur = "";
+    } else {
+      cur += ch;
+    }
   }
-  result.push(current);
-  return result;
+  fields.push(cur);
+  return fields;
 }
