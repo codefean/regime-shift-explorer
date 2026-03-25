@@ -33,6 +33,9 @@ jobs:
           VITE_FINNHUB_TOKEN: ${{ secrets.VITE_FINNHUB_TOKEN }}
         run: npm run build
 
+      - name: List dist
+        run: ls dist/
+
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -42,3 +45,4 @@ jobs:
           force_orphan: true
           user_name: github-actions
           user_email: github-actions@github.com
+          exclude_assets: ''
