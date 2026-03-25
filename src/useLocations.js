@@ -15,10 +15,17 @@ export function useLocations() {
   const [loading, setLoading] = useState(!cachedLocations);
 
   useEffect(() => {
-    if (cachedLocations) { setLocations(cachedLocations); setLoading(false); return; }
+    if (cachedLocations) {
+      setLocations(cachedLocations);
+      setLoading(false);
+      return;
+    }
 
-    fetch(`${import.meta.env.DEV ? '/' : import.meta.env.BASE_URL}rsdb_clean_240824.csv?t=${Date.now()}`)
-      .then(res => { if (!res.ok) throw new Error("not found"); return res.text(); })
+    fetch(`${import.meta.env.BASE_URL}rsdb_clean_240824.csv?t=${Date.now()}`)
+      .then(res => {
+        if (!res.ok) throw new Error("not found");
+        return res.text();
+      })
       .then(text => {
         const map = parseLocationsCSV(text);
         cachedLocations = map;
@@ -30,8 +37,6 @@ export function useLocations() {
       })
       .finally(() => setLoading(false));
   }, []);
-
-  
 
   return { locations, loading };
 }
