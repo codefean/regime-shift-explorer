@@ -72,14 +72,10 @@ function MetaRow({ label, value, theme }) {
   );
 }
 
-
 export default function DetailView({ shift, theme, onBack }) {
   const speedCfg = SPEED_CONFIG[shift.speed] || {};
   const { locations } = useLocations();
-  const shiftLocations = locations?.get(shift.name?.toLowerCase()) ?? [];
-console.log("KEY:", shift.name?.toLowerCase());
-console.log("ALL KEYS:", [...(locations?.keys() ?? [])]);
-console.log("MATCH:", shiftLocations.length);
+  const shiftLocations = locations?.get(shift.name) ?? [];
 
   return (
     <div style={{
