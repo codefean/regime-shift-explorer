@@ -6,8 +6,8 @@ import { themes } from "../theme";
 
 export function useTheme() {
   const [mode, setMode] = useState(() => {
-    try { return localStorage.getItem("rse-theme") || "dark"; }
-    catch { return "dark"; }
+    try { return localStorage.getItem("rse-theme") || "light"; }
+    catch { return "light"; }
   });
 
   const toggle = () => {
