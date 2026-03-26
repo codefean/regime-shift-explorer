@@ -1,5 +1,6 @@
 // components/DetailView.jsx
 
+import React from "react";
 import GlobeMap from "./GlobeMap";
 import RelevantMarkets from "./RelevantMarkets";
 import { SPEED_CONFIG } from "../data/shifts";
@@ -77,27 +78,36 @@ export default function DetailView({ shift, theme, onBack }) {
   const { locations } = useLocations();
   const shiftLocations = locations?.get(shift.name) ?? [];
 
+  const [isMobile, setIsMobile] = React.useState(() => window.innerWidth < 768);
+  React.useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+
   return (
     <div style={{
-      display: "grid",
-      gridTemplateColumns: "420px 1fr",
+      display: isMobile ? "flex" : "grid",
+      flexDirection: isMobile ? "column" : undefined,
+      gridTemplateColumns: isMobile ? undefined : "420px 1fr",
       height: "100vh",
       background: theme.bg,
       fontFamily: "'DM Sans', 'Helvetica Neue', Arial, sans-serif",
-      overflow: "hidden",
+      overflow: isMobile ? "auto" : "hidden",
     }}>
 
       <div style={{
-        height: "100vh",
-        overflowY: "auto",
-        borderRight: `1px solid ${theme.headerBorder}`,
+        height: isMobile ? "auto" : "100vh",
+        overflowY: isMobile ? "visible" : "auto",
+        borderRight: isMobile ? "none" : `1px solid ${theme.headerBorder}`,
         display: "flex",
         flexDirection: "column",
+        width: "100%",
       }}>
 
-
+        {/* ── Sticky header ── */}
         <div style={{
-          padding: "20px 24px 16px",
+          padding: isMobile ? "14px 16px 12px" : "20px 24px 16px",
           borderBottom: `1px solid ${theme.headerBorder}`,
           position: "sticky",
           top: 0,
@@ -136,7 +146,14 @@ export default function DetailView({ shift, theme, onBack }) {
           </span>
         </div>
 
-        <div style={{ padding: "24px 24px 40px", flex: 1 }}>
+        {/* ── Globe — mobile only, inlined below header ── */}
+        {isMobile && (
+          <div style={{ height: 220, background: "#000008", flexShrink: 0, position: "relative" }}>
+            <GlobeMap shift={shift} locations={shiftLocations} />
+          </div>
+        )}
+
+        <div style={{ padding: isMobile ? "20px 16px 40px" : "24px 24px 40px", flex: 1 }}>
           <div style={{ marginBottom: 16 }}>
             {shift.tipping && (
               <div style={{
@@ -246,83 +263,6 @@ export default function DetailView({ shift, theme, onBack }) {
             {shift.assetClasses}
           </div>
 
-          {/* Commodity & market exposure */}
-          {(shift.commodities?.length > 0 || shift.tradeDirections?.length > 0) && (
-            <>
-              <SectionLabel theme={theme}>Commodity & market exposure</SectionLabel>
-
-              {shift.commodities?.length > 0 && (
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
-                  {shift.commodities.map((c) => (
-                    <span key={c} style={{
-                      fontSize: 11,
-                      padding: "3px 9px",
-                      borderRadius: 4,
-                      background: theme.assetBg,
-                      color: theme.metaValue,
-                      border: `1px solid ${theme.assetBorder}`,
-                      fontFamily: "'DM Mono', monospace",
-                      letterSpacing: "0.02em",
-                    }}>
-                      {c}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {shift.tradeDirections?.length > 0 && (
-                <div style={{ borderTop: `1px solid ${theme.divider}`, marginBottom: 12 }}>
-                  {shift.tradeDirections.map((dir) => {
-                    const isLong  = dir.toLowerCase().startsWith("long");
-                    const isShort = dir.toLowerCase().startsWith("short");
-                    const accentColor = isLong ? "#16a34a" : isShort ? "#dc2626" : theme.filterActiveText;
-                    return (
-                      <div key={dir} style={{
-                        display: "flex",
-                        alignItems: "flex-start",
-                        gap: 10,
-                        padding: "7px 0",
-                        borderBottom: `1px solid ${theme.divider}`,
-                      }}>
-                        <span style={{
-                          fontFamily: "'DM Mono', monospace",
-                          fontSize: 10,
-                          fontWeight: 500,
-                          color: accentColor,
-                          marginTop: 2,
-                          flexShrink: 0,
-                          letterSpacing: "0.04em",
-                          minWidth: 36,
-                        }}>
-                          {isLong ? "LONG" : isShort ? "SHORT" : "NOTE"}
-                        </span>
-                        <span style={{ fontSize: 12, color: theme.metaValue, lineHeight: 1.5 }}>
-                          {dir.replace(/^(long|short|watch):\s*/i, "")}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {shift.commoditySignal && (
-                <div style={{
-                  background: theme.assetBg,
-                  border: `1px solid ${theme.assetBorder}`,
-                  borderLeft: `3px solid ${theme.filterActiveBorder}`,
-                  borderRadius: 6,
-                  padding: "10px 12px",
-                  fontSize: 12,
-                  color: theme.metaValue,
-                  lineHeight: 1.65,
-                  fontStyle: "italic",
-                }}>
-                  {shift.commoditySignal}
-                </div>
-              )}
-            </>
-          )}
-
           {/* Map overlay */}
           <SectionLabel theme={theme}>Geographic data</SectionLabel>
           <div style={{
@@ -357,14 +297,16 @@ export default function DetailView({ shift, theme, onBack }) {
         </div>
       </div>
 
-      {/* ── RIGHT PANEL — GLOBE ─────────────────────────────────────────── */}
-      <div style={{
-        height: "100vh",
-        background: "#000008",
-        position: "relative",
-      }}>
-        <GlobeMap shift={shift} locations={shiftLocations} />
-      </div>
+      {/* ── RIGHT PANEL — GLOBE (desktop only) ─────────────────────────── */}
+      {!isMobile && (
+        <div style={{
+          height: "100vh",
+          background: "#000008",
+          position: "relative",
+        }}>
+          <GlobeMap shift={shift} locations={shiftLocations} />
+        </div>
+      )}
 
     </div>
   );

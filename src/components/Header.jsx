@@ -13,12 +13,11 @@ export default function Header({ theme, mode, onToggle }) {
     }}>
       <div>
         <div style={{
-          fontFamily: "'DM Mono', 'Courier New', monospace",
           fontSize: 13,
           letterSpacing: "0.12em",
           textTransform: "uppercase",
           color: theme.titleColor,
-          marginBottom: 6,
+          marginBottom: 1,
           fontWeight: 400,
         }}>
           Environmental intelligence
@@ -29,8 +28,9 @@ export default function Header({ theme, mode, onToggle }) {
           color: theme.subtitleColor,
           letterSpacing: "-0.02em",
           lineHeight: 1.2,
+          marginBottom: -10,
         }}>
-          Regime shift financial exposure index
+          Regime Shift Financial Exposure Index
         </div>
       </div>
 
