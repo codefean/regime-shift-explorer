@@ -1,6 +1,5 @@
 // hooks/useTheme.js
-// Returns the current theme object and a toggle function.
-// Persists preference to localStorage.
+
 
 import { useState } from "react";
 import { themes } from "../theme";

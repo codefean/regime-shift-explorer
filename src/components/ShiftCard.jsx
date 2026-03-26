@@ -68,7 +68,7 @@ export default function ShiftCard({ shift, theme, onClick }) {
 )}
       </div>
 
-      {/* Speed + sector badges */}
+
       <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 12 }}>
         <SpeedBadge speed={shift.speed} />
         {shift.sectors.slice(0, 3).map((s) => (
@@ -85,10 +85,10 @@ export default function ShiftCard({ shift, theme, onClick }) {
         ))}
       </div>
 
-      {/* Divider */}
+
       <div style={{ borderTop: `1px solid ${theme.divider}`, margin: "10px 0" }} />
 
-      {/* Meta grid */}
+
       <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "3px 12px", marginBottom: 10 }}>
         <span style={{ fontSize: 10, color: theme.metaLabel, fontFamily: "'DM Mono', monospace", letterSpacing: "0.06em", paddingTop: 1, whiteSpace: "nowrap" }}>
           HORIZON
@@ -107,7 +107,7 @@ export default function ShiftCard({ shift, theme, onClick }) {
         </span>
       </div>
 
-      {/* Signals */}
+
       <div style={{ display: "flex", flexDirection: "column", gap: 3, marginBottom: 10 }}>
         {shift.signals.slice(0, 3).map((sig) => (
           <div key={sig} style={{ fontSize: 11, color: theme.signalText, lineHeight: 1.5, paddingLeft: 12, position: "relative" }}>
@@ -117,7 +117,7 @@ export default function ShiftCard({ shift, theme, onClick }) {
         ))}
       </div>
 
-      {/* Asset classes */}
+
       <div style={{
         background: theme.assetBg,
         border: `1px solid ${theme.assetBorder}`,

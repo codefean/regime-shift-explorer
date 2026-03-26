@@ -146,7 +146,7 @@ export default function DetailView({ shift, theme, onBack }) {
           </span>
         </div>
 
-        {/* ── Globe — mobile only, inlined below header ── */}
+
         {isMobile && (
           <div style={{ height: 220, background: "#000008", flexShrink: 0, position: "relative" }}>
             <GlobeMap shift={shift} locations={shiftLocations} />
@@ -222,7 +222,7 @@ export default function DetailView({ shift, theme, onBack }) {
             />
           </div>
 
-          {/* Sectors */}
+
           <SectionLabel theme={theme}>Exposed sectors</SectionLabel>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 4 }}>
             {shift.sectors.map((s) => (
@@ -239,7 +239,7 @@ export default function DetailView({ shift, theme, onBack }) {
             ))}
           </div>
 
-          {/* Financial signals */}
+
           <SectionLabel theme={theme}>Financial signals</SectionLabel>
           <div style={{ borderTop: `1px solid ${theme.divider}` }}>
             {shift.signals.map((sig) => (
@@ -247,7 +247,7 @@ export default function DetailView({ shift, theme, onBack }) {
             ))}
           </div>
 
-          {/* Asset classes */}
+
           <SectionLabel theme={theme}>Asset class exposure</SectionLabel>
           <div style={{
             background: theme.assetBg,
@@ -263,7 +263,7 @@ export default function DetailView({ shift, theme, onBack }) {
             {shift.assetClasses}
           </div>
 
-          {/* Map overlay */}
+
           <SectionLabel theme={theme}>Geographic data</SectionLabel>
           <div style={{
             background: theme.assetBg,
@@ -291,13 +291,12 @@ export default function DetailView({ shift, theme, onBack }) {
             )}
           </div>
 
-          {/* Relevant markets */}
           <RelevantMarkets shift={shift} theme={theme} />
 
         </div>
       </div>
 
-      {/* ── RIGHT PANEL — GLOBE (desktop only) ─────────────────────────── */}
+
       {!isMobile && (
         <div style={{
           height: "100vh",

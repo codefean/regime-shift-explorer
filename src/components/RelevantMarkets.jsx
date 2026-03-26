@@ -64,12 +64,12 @@ function StockCard({ stock, price, loading, theme }) {
         </span>
       </div>
 
-      {/* Company name */}
+
       <div style={{ fontSize: 12, fontWeight: 500, color: theme.text, lineHeight: 1.3 }}>
         {stock.name}
       </div>
 
-      {/* Live price row */}
+
       <div style={{
         display: "flex",
         alignItems: "center",
@@ -126,7 +126,7 @@ function StockCard({ stock, price, loading, theme }) {
         )}
       </div>
 
-      {/* Relevance note */}
+
       <div style={{
         fontSize: 11,
         color: theme.signalText,
@@ -140,10 +140,10 @@ function StockCard({ stock, price, loading, theme }) {
   );
 }
 
-// ─── POLYMARKET CARD ─────────────────────────────────────────────────────────
+// ─── POLYMARKET CARD 
 
 function PolymarketCard({ market, theme }) {
-  // Probability bar colour
+
   const pct = market.probability ?? 0;
   const barColor = pct > 60 ? "#dc2626" : pct > 35 ? "#d97706" : "#16a34a";
 
@@ -157,7 +157,7 @@ function PolymarketCard({ market, theme }) {
       flexDirection: "column",
       gap: 8,
     }}>
-      {/* Header label */}
+
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <span style={{
           fontFamily: "'DM Mono', monospace",
@@ -178,7 +178,7 @@ function PolymarketCard({ market, theme }) {
         </span>
       </div>
 
-      {/* Question */}
+
       <div style={{
         fontSize: 12,
         color: theme.text,
@@ -188,7 +188,7 @@ function PolymarketCard({ market, theme }) {
         {market.title}
       </div>
 
-      {/* Probability bar */}
+
       <div>
         <div style={{
           display: "flex",
@@ -223,7 +223,7 @@ function PolymarketCard({ market, theme }) {
         </div>
       </div>
 
-      {/* Relevance */}
+
       <div style={{
         fontSize: 11,
         color: theme.signalText,
@@ -234,7 +234,7 @@ function PolymarketCard({ market, theme }) {
         {market.relevance}
       </div>
 
-      {/* Link or placeholder */}
+
       <div style={{
         fontFamily: "'DM Mono', monospace",
         fontSize: 9,
@@ -250,7 +250,7 @@ function PolymarketCard({ market, theme }) {
   );
 }
 
-// ─── SECTION LABEL ───────────────────────────────────────────────────────────
+
 
 function SectionLabel({ children, theme }) {
   return (
@@ -268,7 +268,7 @@ function SectionLabel({ children, theme }) {
   );
 }
 
-// ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
+
 
 export default function RelevantMarkets({ shift, theme }) {
   const marketData = MARKETS[shift.name];
@@ -297,7 +297,7 @@ export default function RelevantMarkets({ shift, theme }) {
 
   return (
     <div>
-      {/* ── Stocks ── */}
+
       {marketData.stocks?.length > 0 && (
         <>
           <SectionLabel theme={theme}>
@@ -317,7 +317,7 @@ export default function RelevantMarkets({ shift, theme }) {
         </>
       )}
 
-      {/* ── Prediction markets ── */}
+
       {marketData.polymarket?.length > 0 && (
         <>
           <SectionLabel theme={theme}>

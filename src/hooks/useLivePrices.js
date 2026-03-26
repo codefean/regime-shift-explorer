@@ -1,14 +1,12 @@
 // hooks/useLivePrices.js
-// Fetches real-time quotes from Finnhub for a list of tickers.
-// Free tier: 60 calls/min. We batch all tickers for a shift in parallel.
-// Sign up at finnhub.io and set VITE_FINNHUB_TOKEN in your .env file.
+
 
 import { useState, useEffect, useRef } from "react";
 
 const TOKEN = import.meta.env.VITE_FINNHUB_TOKEN;
 const BASE = "https://finnhub.io/api/v1";
 
-// Cache across navigations so we don't re-fetch on every back/forward
+
 const priceCache = {};
 
 async function fetchQuote(ticker) {
@@ -17,7 +15,6 @@ async function fetchQuote(ticker) {
   }
 
   // Finnhub uses plain tickers for US stocks.
-  // For international (e.g. ORSTED.CO, NESTE.HE, MOWI.OL) strip the suffix.
   const symbol = ticker.includes(".") ? ticker.split(".")[0] : ticker;
 
   try {
@@ -26,7 +23,7 @@ async function fetchQuote(ticker) {
     );
     const data = await res.json();
 
-    // Finnhub returns { c: current, d: change, dp: changePercent, h, l, o, pc }
+
     if (!data || data.c === 0) return null;
 
     const result = {

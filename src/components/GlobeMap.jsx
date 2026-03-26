@@ -1,8 +1,5 @@
 // components/GlobeMap.jsx
-// Spinning Mapbox globe with regime shift location overlays.
-// Props:
-//   shift     — current regime shift object
-//   locations — array of {lng, lat, name, id} for this shift (can be empty)
+
 
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
@@ -19,10 +16,10 @@ export default function GlobeMap({ shift, locations = [] }) {
   const mapRef          = useRef(null);
   const isInteracting   = useRef(false);
   const spinEnabled     = useRef(false);
-  const [tooltip, setTooltip] = useState(null); // {x, y, name}
+  const [tooltip, setTooltip] = useState(null); 
   const [pointCount, setPointCount] = useState(0);
 
-  // ── Initialise / reinitialise map when shift changes ──────────────────────
+
   useEffect(() => {
     if (!TOKEN) return;
     spinEnabled.current = true;
@@ -44,7 +41,7 @@ export default function GlobeMap({ shift, locations = [] }) {
     map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "bottom-right");
     map.addControl(new mapboxgl.AttributionControl({ compact: true }), "bottom-left");
 
-    // ── Fog / space atmosphere ─────────────────────────────────────────────
+
     map.on("style.load", () => {
       map.setFog({
         color:            "rgb(0, 0, 0)",
@@ -55,15 +52,15 @@ export default function GlobeMap({ shift, locations = [] }) {
       });
     });
 
-    // ── Spin controls ──────────────────────────────────────────────────────
+
     map.on("mousedown",  () => { isInteracting.current = true; });
     map.on("touchstart", () => { isInteracting.current = true; });
     map.on("dragstart",  () => { isInteracting.current = true; });
     map.on("zoomstart",  () => { isInteracting.current = true; });
 
-    // ── Add location points once map loads ────────────────────────────────
+
     map.on("load", () => {
-      // Hover tooltip
+
       map.on("mouseenter", LAYER_HIT, e => {
         map.getCanvas().style.cursor = "pointer";
         const { x, y } = e.point;
@@ -80,7 +77,7 @@ export default function GlobeMap({ shift, locations = [] }) {
         setTooltip({ x, y, name: props.name || "Case study" });
       });
 
-      // Spin loop
+
       let lastTime = null;
       function spin(timestamp) {
         if (!spinEnabled.current) return;
@@ -105,7 +102,6 @@ export default function GlobeMap({ shift, locations = [] }) {
     };
   }, [shift?.name]);
 
-  // ── Update points whenever locations arrive (CSV loads after map init) ────
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -133,7 +129,7 @@ export default function GlobeMap({ shift, locations = [] }) {
 
       <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
 
-      {/* Shift name watermark */}
+
       <div style={{
         position: "absolute", top: 20, right: 20,
         fontFamily: "'DM Mono', monospace", fontSize: 11,
@@ -149,7 +145,7 @@ export default function GlobeMap({ shift, locations = [] }) {
         )}
       </div>
 
-      {/* No data notice */}
+
       {pointCount === 0 && (
         <div style={{
           position: "absolute", bottom: 52, left: "50%", transform: "translateX(-50%)",
@@ -161,7 +157,7 @@ export default function GlobeMap({ shift, locations = [] }) {
         </div>
       )}
 
-      {/* Hover tooltip */}
+
       {tooltip && (
         <div style={{
           position: "absolute",
@@ -206,7 +202,7 @@ function addPoints(map, locations) {
 
   map.addSource(SOURCE_ID, { type: "geojson", data: geojson });
 
-  // Outer glow halo
+
   map.addLayer({
     id: LAYER_HALO,
     type: "circle",
@@ -219,7 +215,7 @@ function addPoints(map, locations) {
     },
   });
 
-  // Core dot
+
   map.addLayer({
     id: LAYER_DOT,
     type: "circle",

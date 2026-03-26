@@ -1,9 +1,5 @@
 // hooks/useShifts.js
-// Tries to load shifts.csv from the public folder at startup.
-// If found and valid, uses that data. Falls back to the static JS data.
-//
-// TO UPDATE DATA: drop a new shifts.csv into the /public folder and reload.
-// TO RESET: delete shifts.csv from /public and reload.
+
 
 import { useState, useEffect } from "react";
 import { SHIFTS as STATIC_SHIFTS } from "../data/shifts";
@@ -11,7 +7,7 @@ import { parseShiftsCSV } from "../utils/parseShiftsCSV";
 
 export function useShifts() {
   const [shifts, setShifts] = useState(STATIC_SHIFTS);
-  const [source, setSource] = useState("static"); // "static" | "csv"
+  const [source, setSource] = useState("static"); 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -28,7 +24,7 @@ export function useShifts() {
         setError(null);
       })
       .catch((err) => {
-        // No CSV or parse error — silently fall back to static data
+
         if (err.message !== "No CSV found") {
           setError(err.message);
         }

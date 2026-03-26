@@ -56,7 +56,7 @@ export default function RegimeShiftExplorer() {
 
       <div style={{ padding: "20px 32px 40px" }}>
 
-        {/* CSV parse error banner */}
+
         {error && (
           <div style={{
             background: "#fee2e2",

@@ -1,7 +1,5 @@
 // data/markets.js
-// Stocks: causally linked to each regime shift, not generic ESG
-// Polymarket: conceptual markets — replace url with real links when available
-// exposure: "high" | "medium" | "low"
+
 
 export const MARKETS = {
 
