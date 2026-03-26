@@ -246,6 +246,83 @@ export default function DetailView({ shift, theme, onBack }) {
             {shift.assetClasses}
           </div>
 
+          {/* Commodity & market exposure */}
+          {(shift.commodities?.length > 0 || shift.tradeDirections?.length > 0) && (
+            <>
+              <SectionLabel theme={theme}>Commodity & market exposure</SectionLabel>
+
+              {shift.commodities?.length > 0 && (
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
+                  {shift.commodities.map((c) => (
+                    <span key={c} style={{
+                      fontSize: 11,
+                      padding: "3px 9px",
+                      borderRadius: 4,
+                      background: theme.assetBg,
+                      color: theme.metaValue,
+                      border: `1px solid ${theme.assetBorder}`,
+                      fontFamily: "'DM Mono', monospace",
+                      letterSpacing: "0.02em",
+                    }}>
+                      {c}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {shift.tradeDirections?.length > 0 && (
+                <div style={{ borderTop: `1px solid ${theme.divider}`, marginBottom: 12 }}>
+                  {shift.tradeDirections.map((dir) => {
+                    const isLong  = dir.toLowerCase().startsWith("long");
+                    const isShort = dir.toLowerCase().startsWith("short");
+                    const accentColor = isLong ? "#16a34a" : isShort ? "#dc2626" : theme.filterActiveText;
+                    return (
+                      <div key={dir} style={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: 10,
+                        padding: "7px 0",
+                        borderBottom: `1px solid ${theme.divider}`,
+                      }}>
+                        <span style={{
+                          fontFamily: "'DM Mono', monospace",
+                          fontSize: 10,
+                          fontWeight: 500,
+                          color: accentColor,
+                          marginTop: 2,
+                          flexShrink: 0,
+                          letterSpacing: "0.04em",
+                          minWidth: 36,
+                        }}>
+                          {isLong ? "LONG" : isShort ? "SHORT" : "NOTE"}
+                        </span>
+                        <span style={{ fontSize: 12, color: theme.metaValue, lineHeight: 1.5 }}>
+                          {dir.replace(/^(long|short|watch):\s*/i, "")}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {shift.commoditySignal && (
+                <div style={{
+                  background: theme.assetBg,
+                  border: `1px solid ${theme.assetBorder}`,
+                  borderLeft: `3px solid ${theme.filterActiveBorder}`,
+                  borderRadius: 6,
+                  padding: "10px 12px",
+                  fontSize: 12,
+                  color: theme.metaValue,
+                  lineHeight: 1.65,
+                  fontStyle: "italic",
+                }}>
+                  {shift.commoditySignal}
+                </div>
+              )}
+            </>
+          )}
+
           {/* Map overlay */}
           <SectionLabel theme={theme}>Geographic data</SectionLabel>
           <div style={{
