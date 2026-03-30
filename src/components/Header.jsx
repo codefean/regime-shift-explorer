@@ -33,6 +33,7 @@ export default function Header({ theme, mode, onToggle }) {
           Regime Shift Financial Exposure Index
         </div>
       </div>
+      
 
       <button
         onClick={onToggle}
